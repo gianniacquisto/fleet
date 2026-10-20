@@ -44,17 +44,17 @@ Verify with `opencode api agent.list` — `black`, `blue` and `reviewer` should 
 
 ## Protecting `main`
 
-GitHub's branch protection and rulesets are unavailable here: the repo is private on a free plan, and the API answers `403 Upgrade to GitHub Pro`. The guard is a tracked hook instead.
+`main` is protected on GitHub: **a pull request is required**, force pushes and deletions are refused, and the rule applies to admins too — so neither the human's token nor an agent's can push a commit straight to `main`. There are no required approvals and no required checks, because the reviewer runs as the same GitHub account and the repo has no CI; a self-approval would never satisfy an approval count, and a check that does not exist cannot gate anything. The only way in is a merge commit through a PR, which is what the workflow already does.
+
+A local hook repeats the rule with a clearer message and a one-shot bypass:
 
 ```sh
 git config core.hooksPath hooks
 ```
 
-`hooks/pre-push` rejects any push whose remote ref is `refs/heads/main`, naming `git push --no-verify` as the deliberate one-shot bypass. It is a **local** guard, not a server-side one:
+`hooks/pre-push` rejects any push whose remote ref is `refs/heads/main`, naming `git push --no-verify` as the bypass. It is a convenience, not the guard: a clone that has not run the config still cannot push, because GitHub refuses first.
 
-- a clone that has not run the config is not covered — run it once per clone;
-- `gh pr merge` is unaffected, because the merge happens on GitHub's side, which is the shape the workflow wants: the only way into `main` is a pull request;
-- to lift it, `git config --unset core.hooksPath`.
+To change the server rule, use the GitHub settings page or `gh api -X PUT repos/gianniacquisto/fleet/branches/main/protection` — it is branch policy, so the reviewer will hand it to the human rather than merge it. To drop just the local hook, `git config --unset core.hooksPath`.
 
 ## Reviewing
 

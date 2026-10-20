@@ -28,7 +28,7 @@ Re-check this behavior if OpenCode is upgraded — newer versions have reworked 
 
 ## Terse
 
-`terse/TERSE.md` is a harness-agnostic style prompt: bullets, no filler, technical content intact. Injected into every session of every harness, so it is not an agent — OpenCode reaches it through `instructions` in `~/.config/opencode/opencode.json`, Claude Code and Codex through a symlinked global rule.
+`terse/TERSE.md` is a harness-agnostic style prompt: bullets, no filler, technical content intact. On by default in every session of every harness, so it is not an agent. In OpenCode the `terse` plugin (`terse/opencode/plugin/`) appends it to the system prompt while the switch says on, and `/terse off` flips that switch; Claude Code and Codex reach it through a symlinked global rule.
 
 Install and the savings caveats: [`terse/README.md`](terse/README.md).
 

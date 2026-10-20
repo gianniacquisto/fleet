@@ -1,7 +1,7 @@
 ---
-description: Re-apply the terse style from TERSE.md for the rest of this session
+description: Terse style on or off for every OpenCode agent — /terse, /terse off, /terse on
 ---
 
-For the rest of this session, every reply — this one included — follows the style below. Do not restate it, do not name it, do not ask before applying it.
+!`"$HOME/.config/opencode/terse.sh" $ARGUMENTS`
 
-!`cat "$HOME/projects/fleet/terse/TERSE.md"`
+The line above is the terse style switch: it applies to every agent, every session, from the next request. Confirm the new state in one short sentence.

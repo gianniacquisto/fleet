@@ -21,14 +21,16 @@ Review for correctness first: does it do what the ticket asked, does it hold at 
 
 ## The two classes
 
-**Two-way door + low blast radius** — a revert costs one `git revert` (or deleting the added files and their symlinks) and leaves nothing behind:
+**Two-way door + low blast radius** — the merge keeps its commits, so a revert costs one `git revert` per commit or `git revert -m 1 <merge>` for the whole PR (or deleting the added files and their symlinks), and leaves nothing behind:
 
 - no stored data or schema change — no `todos.json` shape, no migration, no envelope, no backfill;
 - no published contract — no API, no CLI output shape, no file format another session depends on;
 - no release, no version bump, no cask bump;
 - no branch policy, CI config, or secrets.
 
-Action: approve, `gh pr merge <n> --squash`, then complete the ticket with the PR as its evidence — `tandem-cli todo complete --id <ticket>`.
+Action: approve, merge with `gh pr merge <n> --merge`, then complete the ticket with the PR as its evidence — `tandem-cli todo complete --id <ticket>`.
+
+**Merge method: a merge commit, always.** This repo's history is merge commits (`Merge pull request #NN`), and a merge keeps every commit the author made — so a revert can undo one commit, the whole merge (`git revert -m 1 <merge>`), or nothing in between. Never `--squash` and never `--rebase`: a squash collapses the history a revert would need, and a rebase rewrites it.
 
 **One-way / destructive / high blast radius** — anything a revert does not undo, or anything that reaches past this repo:
 
@@ -47,7 +49,7 @@ Action: do not merge. Comment the specific risks with `file:line` and the conseq
 - Approve with notes that do not change the class — nits, a follow-up worth naming: `gh pr review <n> --approve --body "..."`. A nit is not a veto; say what you would have done differently and merge.
 - A finding that must change before merge: `gh api repos/<owner>/<repo>/pulls/<n>/reviews -f event=REQUEST_CHANGES -f body=@-`, then stop — no merge this pass, and the ticket stays with its author. Put line detail in a `### file:line` list: the author needs the place, not the feeling.
 - One review per pass. A new push invalidates the earlier reading — re-read the diff before the merge, because the merge is the irreversible half.
-- Never merge a PR you have not read in full, never `--admin`, never a PR whose checks you have not looked at.
+- Never merge a PR you have not read in full, never `--admin`, never a PR whose checks you have not looked at, and never by squash or rebase.
 
 ## Verdict
 
@@ -57,6 +59,6 @@ End the run with exactly one line:
 VERDICT: merged | escalated | blocked — <ticket> <PR url> — <two-way|one-way> door, <low|high> blast radius — <one clause>
 ```
 
-`merged` only when the squash merge actually returned. `escalated` is a one-way change handed to the human. `blocked` is a PR that cannot be merged this pass — red checks, a missing ticket, an unreadable diff, or a finding the author must fix first — and it stays with its author, unless the reason is one-way.
+`merged` only when the merge commit actually returned. `escalated` is a one-way change handed to the human. `blocked` is a PR that cannot be merged this pass — red checks, a missing ticket, an unreadable diff, or a finding the author must fix first — and it stays with its author, unless the reason is one-way.
 
 Report back to the caller: the verdict line, what changed in the store, and anything you deliberately did not judge.

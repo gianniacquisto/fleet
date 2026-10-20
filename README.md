@@ -46,7 +46,7 @@ Verify with `opencode api agent.list` — `black`, `blue` and `reviewer` should 
 
 `reviewer` is a subagent: the trunk hands it a ticket whose PR is waiting for review, plus the PR number. It reads the diff, the checks and the ticket, reviews against the repo's `AGENTS.md`, ADRs and `GLOSSARY.md`, then puts the change in one of two classes. The rule is about what a revert costs.
 
-- **Two-way door + low blast radius** — the change is revertible with one `git revert` (or by deleting what it added) and leaves nothing behind: no stored-data or schema change, no published contract, no release, nothing reaching past this repo. The reviewer approves, `gh pr merge --squash`, and completes the ticket with the PR as evidence.
+- **Two-way door + low blast radius** — the change is revertible with one `git revert` (or by deleting what it added) and leaves nothing behind: no stored-data or schema change, no published contract, no release, nothing reaching past this repo. The reviewer approves, merges with `gh pr merge --merge` — a merge commit, never a squash, so the history a revert needs survives — and completes the ticket with the PR as evidence.
 - **One-way / destructive / high blast radius** — a revert does not undo it, or it reaches past this repo: a schema or envelope change, a migration, deleting data, a published API, a release, branch policy. The reviewer comments the specific risks, sets the ticket `assignee human` + `refined`, and never merges.
 
 Unsure goes to the second class. The author states the class in the PR body's `## Merge Danger` section (`Door:`, `Blast Radius:`); the reviewer verifies it against the diff rather than trusting it.

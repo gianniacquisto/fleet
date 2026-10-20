@@ -5,10 +5,10 @@ set -euo pipefail
 SRC="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/TERSE.md"
 out() { printf '  %s\n' "$*"; }
 
-link() { # link <target> <label>
-  local target=$1 label=$2
+link() { # link <source> <target> <label>
+  local src=$1 target=$2 label=$3
   if [ -L "$target" ]; then
-    if [ "$(readlink "$target")" = "$SRC" ]; then
+    if [ "$(readlink "$target")" = "$src" ]; then
       out "ok       $label"
     else
       out "skip     $label (symlink to elsewhere)"
@@ -20,7 +20,7 @@ link() { # link <target> <label>
     return
   fi
   mkdir -p "$(dirname "$target")"
-  ln -s "$SRC" "$target"
+  ln -s "$src" "$target"
   out "linked   $label"
 }
 
@@ -28,12 +28,12 @@ echo "terse"
 
 # Claude Code: user-level rules load in every session, every project.
 if [ -d "$HOME/.claude" ]; then
-  link "$HOME/.claude/rules/terse.md" "~/.claude/rules/terse.md"
+  link "$SRC" "$HOME/.claude/rules/terse.md" "~/.claude/rules/terse.md"
 fi
 
 # Codex: one global instruction file, no import syntax.
 if [ -d "$HOME/.codex" ]; then
-  link "$HOME/.codex/AGENTS.md" "~/.codex/AGENTS.md"
+  link "$SRC" "$HOME/.codex/AGENTS.md" "~/.codex/AGENTS.md"
 fi
 
 # OpenCode: config can reference the file directly, so only report.
@@ -47,6 +47,13 @@ if [ -n "$cfg" ]; then
   else
     out "manual   add \"$SRC\" to the instructions array in $cfg"
   fi
+fi
+
+# OpenCode escapes: the /terse command and the terse agent, symlinked like the rest of the fleet.
+if [ -d "$HOME/.config/opencode" ]; then
+  here=$(cd "$(dirname "$SRC")" && pwd)
+  link "$here/opencode/commands/terse.md" "$HOME/.config/opencode/commands/terse.md" "~/.config/opencode/commands/terse.md"
+  link "$here/opencode/agents/terse.md" "$HOME/.config/opencode/agents/terse.md" "~/.config/opencode/agents/terse.md"
 fi
 
 echo "restart any running session to pick it up."

@@ -42,11 +42,34 @@ Codex reads a single global file and has no import syntax. If `~/.codex/AGENTS.m
 
 Other harnesses take the same shape — a global instruction file or rule that loads at session start: Gemini CLI (`~/.gemini/GEMINI.md`), Cursor (user rules, or `.cursor/rules/terse.mdc` with `alwaysApply: true`), Copilot (`.github/copilot-instructions.md`). Not verified here; check the path before trusting it.
 
+## Turning it off
+
+Always-on is the default. The two escapes below put the style one keystroke away instead, so you can drop the always-on entry and still have it when you want it. Both are OpenCode-only — Claude Code and Codex have just the file.
+
+| Escape | Scope | Mechanism |
+|---|---|---|
+| `/terse` | the rest of the current session | `~/.config/opencode/commands/terse.md` reads `TERSE.md` at run time and submits it as a user message. No config write — the way in once the entry is gone, or a reset when a long session has drifted verbose. |
+| `terse` agent | a whole session | `shift+tab` (`agent.cycle`) selects it, or pick it from the agent list. Its body is `TERSE.md`, and an agent body **replaces** the base prompt instead of adding to it. |
+
+The permanent switch is the `instructions` entry: delete the `TERSE.md` path from the array in `~/.config/opencode/opencode.json`. Nothing mid-session removes it, and OpenCode reloads the instruction set when that file changes, so the entry is the only switch — which is why the two escapes above exist.
+
+Once terse is opt-in, the intended shape is: no entry in `instructions`, `/terse` for a session that has drifted verbose, `shift+tab` for a session that should start terse.
+
+`install.sh` symlinks both escapes into `~/.config/opencode/`. The agent file has to duplicate `TERSE.md` — a Markdown agent body is the whole system prompt and it cannot include another file — so the copy is checked rather than trusted (from this directory):
+
+```sh
+diff <(sed '1,6d' opencode/agents/terse.md) TERSE.md   # silent = in sync
+```
+
+The command duplicates nothing: its shell block reads `TERSE.md` at run time.
+
 ## Why instruction files and not a skill or agent
 
 - **Always on.** A global instruction file loads at every session start in every harness. A skill loads when the model decides to call it — measurably unreliable.
 - **Portable.** Every harness has this slot. Only some have agents, and each agent format differs.
 - **Additive.** It sits alongside the harness's own prompt rather than replacing it, so you keep the tool guidance the vendor tuned.
+
+All three describe the default. The `terse` agent is the deliberate exception: selecting it *replaces* the base prompt, which is the cost of the opt-in switch above.
 
 ## Honest math
 

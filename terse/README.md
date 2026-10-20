@@ -32,6 +32,8 @@ ln -s ~/projects/fleet/terse/TERSE.md ~/.codex/AGENTS.md   # only if you have no
 
 Codex reads a single global file and has no import syntax. If `~/.codex/AGENTS.md` already exists, paste the body of `TERSE.md` into it under a `## Style` heading instead of replacing it.
 
+These links point into a Git working tree, so `~/projects/fleet` has to stay on `main` (or a branch that contains it). Check out an older branch there and the plugin and the switch both dangle: terse goes off silently and `/terse` cannot run. `install.sh` reports a dangling link; the fix is `git -C ~/projects/fleet checkout main`.
+
 ## The switch (OpenCode)
 
 `terse` is registered as a plugin, not as an instruction file, because an instruction file is always on and only a config edit turns it off. The plugin appends `TERSE.md` to the system prompt of each request while the switch says on, and appends nothing when it says off — off is the style genuinely absent, not a second instruction arguing with the first.

@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
-# Link TERSE.md into every harness found on this machine. Idempotent; never overwrites.
+# Wire TERSE.md into every harness found on this machine. Idempotent; never overwrites.
 set -euo pipefail
 
-SRC="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/TERSE.md"
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SRC="$HERE/TERSE.md"
 out() { printf '  %s\n' "$*"; }
 
-link() { # link <target> <label>
-  local target=$1 label=$2
+link() { # link <source> <target> <label>
+  local src=$1 target=$2 label=$3
   if [ -L "$target" ]; then
-    if [ "$(readlink "$target")" = "$SRC" ]; then
+    if [ "$(readlink "$target")" = "$src" ]; then
       out "ok       $label"
     else
       out "skip     $label (symlink to elsewhere)"
@@ -20,33 +21,52 @@ link() { # link <target> <label>
     return
   fi
   mkdir -p "$(dirname "$target")"
-  ln -s "$SRC" "$target"
+  ln -s "$src" "$target"
   out "linked   $label"
+}
+
+retire() { # retire <target> <why>
+  local target=$1 why=$2
+  if [ -L "$target" ]; then
+    rm "$target"
+    out "removed  $target ($why)"
+  fi
 }
 
 echo "terse"
 
 # Claude Code: user-level rules load in every session, every project.
 if [ -d "$HOME/.claude" ]; then
-  link "$HOME/.claude/rules/terse.md" "~/.claude/rules/terse.md"
+  link "$SRC" "$HOME/.claude/rules/terse.md" "~/.claude/rules/terse.md"
 fi
 
 # Codex: one global instruction file, no import syntax.
 if [ -d "$HOME/.codex" ]; then
-  link "$HOME/.codex/AGENTS.md" "~/.codex/AGENTS.md"
+  link "$SRC" "$HOME/.codex/AGENTS.md" "~/.codex/AGENTS.md"
 fi
 
-# OpenCode: config can reference the file directly, so only report.
+# OpenCode: the plugin owns the injection, because it has to be able to stop.
+if [ -d "$HOME/.config/opencode" ]; then
+  link "$HERE/opencode/plugin" "$HOME/.config/opencode/plugins/terse" "~/.config/opencode/plugins/terse"
+  link "$HERE/opencode/terse.sh" "$HOME/.config/opencode/terse.sh" "~/.config/opencode/terse.sh"
+  link "$HERE/opencode/commands/terse.md" "$HOME/.config/opencode/commands/terse.md" "~/.config/opencode/commands/terse.md"
+  # terse used to be a selectable primary agent; the switch replaced it.
+  retire "$HOME/.config/opencode/agents/terse.md" "the terse agent is gone — terse is a switch"
+fi
+
+# With the plugin installed the config entry is a second, always-on copy of the same file.
 cfg=""
 for candidate in "$HOME/.config/opencode/opencode.jsonc" "$HOME/.config/opencode/opencode.json"; do
   [ -f "$candidate" ] && cfg=$candidate && break
 done
 if [ -n "$cfg" ]; then
   if grep -q "TERSE.md" "$cfg"; then
-    out "ok       opencode.json instructions"
+    out "manual   remove the TERSE.md path from \"instructions\" in $cfg (the plugin injects it now)"
   else
-    out "manual   add \"$SRC\" to the instructions array in $cfg"
+    out "ok       opencode.json instructions"
   fi
 fi
 
-echo "restart any running session to pick it up."
+echo
+echo "switch: $("$HERE/opencode/terse.sh") — /terse off or $HOME/.config/opencode/terse.sh off"
+echo "restart a running session to pick up a newly linked plugin."

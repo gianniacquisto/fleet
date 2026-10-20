@@ -1,0 +1,21 @@
+#!/bin/sh
+# Refuse a direct push to main. Work lands through a pull request.
+#
+# This repo is private on a free plan, so GitHub's own branch protection and
+# rulesets are unavailable (403 "Upgrade to GitHub Pro"). The guard lives here
+# instead and is wired with `git config core.hooksPath hooks`.
+#
+# What it does not cover: a push from another clone that has not run that
+# config, and `gh pr merge`, which happens on GitHub's side — which is the
+# point: the only way into main is a merge.
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  if [ "$remote_ref" = "refs/heads/main" ]; then
+    printf '%s\n' \
+      "pre-push: main is protected — open a pull request instead." \
+      "pre-push: the reviewer merges server-side, so this only blocks direct pushes." \
+      "pre-push: if you mean it, bypass once with 'git push --no-verify'." >&2
+    exit 1
+  fi
+done
+exit 0

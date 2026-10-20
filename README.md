@@ -42,6 +42,20 @@ ln -s ~/projects/fleet/reviewer.md ~/.config/opencode/agents/reviewer.md
 
 Verify with `opencode api agent.list` — `black`, `blue` and `reviewer` should appear with their models and colors.
 
+## Protecting `main`
+
+GitHub's branch protection and rulesets are unavailable here: the repo is private on a free plan, and the API answers `403 Upgrade to GitHub Pro`. The guard is a tracked hook instead.
+
+```sh
+git config core.hooksPath hooks
+```
+
+`hooks/pre-push` rejects any push whose remote ref is `refs/heads/main`, naming `git push --no-verify` as the deliberate one-shot bypass. It is a **local** guard, not a server-side one:
+
+- a clone that has not run the config is not covered — run it once per clone;
+- `gh pr merge` is unaffected, because the merge happens on GitHub's side, which is the shape the workflow wants: the only way into `main` is a pull request;
+- to lift it, `git config --unset core.hooksPath`.
+
 ## Reviewing
 
 `reviewer` is a subagent: the trunk hands it a ticket whose PR is waiting for review, plus the PR number. It reads the diff, the checks and the ticket, reviews against the repo's `AGENTS.md`, ADRs and `GLOSSARY.md`, then puts the change in one of two classes. The rule is about what a revert costs.

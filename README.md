@@ -9,8 +9,9 @@ Personal agent fleet: agent definitions and the shared prompts they run on. This
 | `black` | `primary` | `gianni-desktop/Qwen3.8-27B-UD-Q6_K` | Local Qwen 27B (OpenAI-compatible server at `gianni-desktop:8000`) |
 | `blue` | `primary` | `opencode/deepseek-v4.1-flash-free` | Free OpenCode Zen DeepSeek |
 | `reviewer` | `subagent` | `opencode/deepseek-v4.1-flash-free` | Reviews a PR and merges only a two-way door — see [Reviewing](#reviewing) |
+| `retro` | `subagent` | `opencode/deepseek-v4.1-flash-free` | Runs the retro skill on a session and files findings as backlog tickets — see [Retro](#retro) |
 
-`black` and `blue` are pure model switches — identical prompt, different model, so they are directly comparable. `reviewer` is dispatched for one PR and ends with a verdict.
+`black` and `blue` are pure model switches — identical prompt, different model, so they are directly comparable. `reviewer` is dispatched for one PR and ends with a verdict; `retro` is dispatched for one session and ends by filing tickets.
 
 ## Dispatching
 
@@ -38,9 +39,10 @@ Install and the savings caveats: [`terse/README.md`](terse/README.md).
 ln -s ~/projects/fleet/black.md ~/.config/opencode/agents/black.md
 ln -s ~/projects/fleet/blue.md ~/.config/opencode/agents/blue.md
 ln -s ~/projects/fleet/reviewer.md ~/.config/opencode/agents/reviewer.md
+ln -s ~/projects/fleet/retro.md ~/.config/opencode/agents/retro.md
 ```
 
-Verify with `opencode api agent.list` — `black`, `blue` and `reviewer` should appear with their models and colors.
+Verify with `opencode api agent.list` — `black`, `blue`, `reviewer` and `retro` should appear with their models and colors.
 
 ## Reviewing
 
@@ -50,6 +52,16 @@ Verify with `opencode api agent.list` — `black`, `blue` and `reviewer` should 
 - **One-way / destructive / high blast radius** — a revert does not undo it, or it reaches past this repo: a schema or envelope change, a migration, deleting data, a published API, a release, branch policy. The reviewer comments the specific risks, sets the ticket `assignee human` + `refined`, and never merges.
 
 Unsure goes to the second class. The author states the class in the PR body's `## Merge Danger` section (`Door:`, `Blast Radius:`); the reviewer verifies it against the diff rather than trusting it.
+
+## Retro
+
+`retro` is a subagent: the caller names a session and it reads the transcript (`opencode api session.message.list`), runs the retro skill's categories against it, and files each finding as a `backlog` ticket in that project's cycle lane. The tickets are the output; the report is a receipt.
+
+- **The bar** — an anchor in the transcript, a named cost, and a next move someone can take without having been in the session. Generic advice, a preference with no cost, and anything an open ticket already covers is skipped and named.
+- **Nothing else moves.** Always `backlog`, never assigned. It does not refine, dispatch, complete, or edit the code the session touched — a retro that fixes what it finds cannot report on it honestly.
+- **Zero tickets is a valid result.** More than five from one session means the bar was lowered, not that the session was bad.
+
+Its body is the retro skill plus the filing rules: the skill's last step presents candidates to the user, and this agent files them instead.
 
 ## Adding a new agent
 

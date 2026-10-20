@@ -1,6 +1,6 @@
-# agents
+# fleet
 
-Personal OpenCode agent definitions. This repo is the source of truth; OpenCode discovers the agents via symlinks in `~/.config/opencode/agents/`.
+Personal agent fleet: primary agent definitions and the shared prompts they run on. This repo is the source of truth; OpenCode discovers the agents via symlinks in `~/.config/opencode/agents/`.
 
 ## Agents
 
@@ -25,11 +25,17 @@ opencode run --agent blue  --model opencode/deepseek-v4.1-flash-free "..."
 
 Re-check this behavior if OpenCode is upgraded — newer versions have reworked agent switching and may couple the two.
 
+## Terse
+
+`terse/TERSE.md` is a harness-agnostic style prompt: bullets, no filler, technical content intact. Injected into every session of every harness, so it is not an agent — OpenCode reaches it through `instructions` in `~/.config/opencode/opencode.json`, Claude Code and Codex through a symlinked global rule.
+
+Install and the savings caveats: [`terse/README.md`](terse/README.md).
+
 ## Install / re-link
 
 ```sh
-ln -s ~/projects/agents/black.md ~/.config/opencode/agents/black.md
-ln -s ~/projects/agents/blue.md ~/.config/opencode/agents/blue.md
+ln -s ~/projects/fleet/black.md ~/.config/opencode/agents/black.md
+ln -s ~/projects/fleet/blue.md ~/.config/opencode/agents/blue.md
 ```
 
 Verify with `opencode api agent.list` — `black` and `blue` should appear with their models and colors.

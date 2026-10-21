@@ -63,6 +63,10 @@ Unsure goes to the second class. The author states the class in the PR body's `#
 
 Its body is the retro skill plus the filing rules: the skill's last step presents candidates to the user, and this agent files them instead.
 
+## Workflow
+
+[WORKFLOW.md](WORKFLOW.md) is the end-to-end map: every agent's role in the ticket lifecycle, the handoffs between them, and the gaps where the fleet does not yet fully run on Tandem.
+
 ## Adding a new agent
 
 1. Create `<name>.md` here — the filename becomes the agent name. Copy an existing file; frontmatter supports `description` (required), `mode` (`primary`/`subagent`/`all`), `model` (`provider/model`), `color`, `temperature`, `permission`.

@@ -1,6 +1,6 @@
 # fleet
 
-Personal agent fleet: the model-switch builders, and the map of the workflow they run in. The passes that run on Tandem — `reviewer`, `retro`, `consolidator` — live in the Tandem repo, which owns the board and the bikeshed they act on; this repo holds `black` and `blue` (the same prompt, two models, opt-in) and `terse`, the style every prompt runs under. OpenCode discovers the agents through symlinks in `~/.config/opencode/agents/`.
+Personal agent fleet: the model-switch builders, and the map of the workflow they run in. The passes that run on Tandem — `refine`, `reviewer`, `retro`, `consolidator` — live in the Tandem repo, which owns the board and the bikeshed they act on; this repo holds `black` and `blue` (the same prompt, two models, opt-in) and `terse`, the style every prompt runs under. OpenCode discovers the agents through symlinks in `~/.config/opencode/agents/`.
 
 ## Agents
 
@@ -8,19 +8,21 @@ Personal agent fleet: the model-switch builders, and the map of the workflow the
 |---|---|---|---|---|
 | `black` | `primary` | `gianni-desktop/Qwen3.8-27B-UD-Q6_K` | this repo | Local Qwen 27B (OpenAI-compatible server at `gianni-desktop:8000`) |
 | `blue` | `primary` | `opencode/deepseek-v4.1-flash-free` | this repo | Free OpenCode Zen DeepSeek |
+| `build` | `primary` | the session's | the harness (OpenCode) | The harness's default agent — the one a session runs when nothing names another |
 | `general` | `subagent` | the session's | the harness (OpenCode) | The harness's generalist — the builder the board dispatches a buildable ticket to |
 | `explore` | `subagent` | the session's | the harness (OpenCode) | The harness's read-only repo search |
+| `refine` | `subagent` | `opencode/deepseek-v4.1-flash-free` | the tandem repo | Grills a `backlog` ticket into a brief a builder can be handed; the triage pass |
 | `reviewer` | `subagent` | `opencode/deepseek-v4.1-flash-free` | the tandem repo | Reviews a PR and merges only a two-way door — see [Reviewing](#reviewing) |
 | `retro` | `subagent` | `opencode/deepseek-v4.1-flash-free` | the tandem repo | Runs the retro skill on a session and files findings as backlog tickets — see [Retro](#retro) |
 | `consolidator` | `subagent` | — | the tandem repo | Folds the bikeshed's captures into the curated notes; on request only |
 
 The roster of record is the [Roster](WORKFLOW.md#roster) in `WORKFLOW.md`; this table is the front page's summary of it.
 
-`general` and `explore` are the harness's, not the fleet's: OpenCode ships them, so no file in this repo or the Tandem repo defines them, and neither names a model — each runs the model of the session that dispatches it.
+`build`, `general` and `explore` are the harness's, not the fleet's: OpenCode ships them, so no file in this repo or the Tandem repo defines them, and none of the three names a model — each runs the model of the session it is in.
 
-`black` and `blue` are pure model switches — identical prompt, different model, so they are directly comparable. `reviewer` is dispatched for one PR and ends with a verdict; `retro` is dispatched for one session and ends by filing tickets.
+`black` and `blue` are pure model switches — identical prompt, different model, so they are directly comparable. `refine` is dispatched for one ticket and ends with a brief; `reviewer` is dispatched for one PR and ends with a verdict; `retro` is dispatched for one session and ends by filing tickets.
 
-**How the three Tandem passes are entered.** They are not host commands, and no repo ships a command file for them — what the Tandem repo holds are skills: `skills/tandem-board/` triages and dispatches, `skills/tandem-consolidate/` dispatches the `consolidator` agent, and the `retro` agent runs the categories in `skills/retro/`, a file it reads rather than a skill it invokes. The `reviewer` is dispatched by a session, not by a skill: its contract is its own prompt (`agents/reviewer.md` there), and the session hands it a ticket id and a PR number. A host that wants its own shortcut binds one; the binding is the host's business.
+**How the four Tandem passes are entered.** They are not host commands, and no repo ships a command file for them — what the Tandem repo holds are skills: `skills/tandem-board/` triages and dispatches, `skills/tandem-consolidate/` dispatches the `consolidator` agent, and the `retro` agent runs the categories in `skills/retro/`, a file it reads rather than a skill it invokes. The `refine` agent is dispatched by the board skill for a ticket that needs a spec, and the `reviewer` is dispatched by a session, not by a skill: each one's contract is its own prompt (`agents/refine.md`, `agents/reviewer.md` there), and the caller hands it a ticket id — plus a PR number for the reviewer. A host that wants its own shortcut binds one; the binding is the host's business.
 
 The split is by ownership, not by kind: the passes that run on Tandem live in the Tandem repo (`agents/` there), because the board, the bikeshed and the ticket model they act on are Tandem's. The two that are only builders — one prompt, two models — stay here. Tandem's ADR 0026 (`docs/adr/0026-agent-prompts-and-portable-setup.md` in that repo) records the decision.
 
@@ -54,9 +56,9 @@ ln -s "$PWD/black.md" ~/.config/opencode/agents/black.md
 ln -s "$PWD/blue.md" ~/.config/opencode/agents/blue.md
 ```
 
-The passes that run on Tandem are installed by the Tandem repo, which owns them: `reviewer`, `retro` and `consolidator`, and the skills and instructions they work with. The `tandem-setup` skill does it — ask your agent to set up Tandem. It lands with the next Tandem release (tandem PR #73) — until then, the prompts are in this repo's history and in the Tandem PR.
+The passes that run on Tandem are installed by the Tandem repo, which owns them: `refine`, `reviewer`, `retro` and `consolidator`, and the skills and instructions they work with. The `tandem-setup` skill does it — ask your agent to set up Tandem. It lands with the next Tandem release (tandem PR #73) — until then, the prompts are in this repo's history and in the Tandem PR.
 
-Verify with `opencode api agent.list` — `reviewer`, `retro` and `consolidator` should appear with their models and colors, and `black` and `blue` only if you linked them.
+Verify with `opencode api agent.list` — `refine`, `reviewer`, `retro` and `consolidator` should appear with their models and colors, and `black` and `blue` only if you linked them.
 
 ## Reviewing
 
@@ -89,4 +91,4 @@ Its body is the retro skill plus the filing rules: the skill's last step present
 
 ## Not in this repo
 
-The passes that run on Tandem — `reviewer`, `retro` and `consolidator` — live in the Tandem repo, in `agents/` there, with the skills they run in `skills/` there. They read the board through `tandem-cli` and write into the bikeshed, so the project that owns those owns their prompts; Tandem's ADR 0026 records the decision. This repo keeps `black`, `blue` and `terse`.
+The passes that run on Tandem — `refine`, `reviewer`, `retro` and `consolidator` — live in the Tandem repo, in `agents/` there, with the skills they run in `skills/` there. They read the board through `tandem-cli` and write into the bikeshed, so the project that owns those owns their prompts; Tandem's ADR 0026 records the decision. This repo keeps `black`, `blue` and `terse`.

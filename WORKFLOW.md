@@ -55,7 +55,7 @@ The two current statements differ — the reviewer's own prompt completes what i
 
 ## Gaps (2026-10-21)
 
-Each is filed as a `backlog` ticket — in the `fleet` lane for this repo's own gaps, in the `Tandem` lane for the four that live there; this section is the summary.
+Each gap is filed as a ticket — in the `fleet` lane for this repo's own gaps, in the `Tandem` lane for the two still open there (`5621FB91`, `7FFD7CD7`); the rest are closed. This section is the summary.
 
 1. **The builder prompts carry no PR contract.** `reviewer.md` states the whole contract (the `## Merge Danger` claim, the merge-commit rule, the evidence) and `black`/`blue` state none of it. A missing claim forces the reviewer to guess the class, and every builder re-derives the contract from the README. Cost: the handoff depends on the builder having happened to read. Next move: put the contract in the shared builder prompt — or decide deliberately that the project's `AGENTS.md` delivers it, so the fleet prompts stay host-agnostic.
 2. **The fleet repo has no `AGENTS.md`; the protocol arrives through host glue.** Fleet sessions run the memory and session-ticket rules because `~/.config/opencode/opencode.json` points `instructions` at `~/projects/tandem/AGENTS.md` — another project's file, invisible to a fresh clone and to any other host. Cost: the fleet declares nothing about itself; on a host without that entry, fleet sessions run without the protocol. Next move: an `AGENTS.md` in this repo carrying the fleet's own rules.

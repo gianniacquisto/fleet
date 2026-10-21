@@ -1,6 +1,6 @@
 # fleet
 
-Personal agent fleet: the model-switch builders, and the map of the workflow they run in. The passes that run on Tandem — `reviewer`, `retro`, `consolidator` — live in the Tandem repo, which owns the board and the bikeshed they act on; this repo holds `black` and `blue` (the same prompt, two models) and `terse`, the style every prompt runs under. OpenCode discovers the agents through symlinks in `~/.config/opencode/agents/`.
+Personal agent fleet: the model-switch builders, and the map of the workflow they run in. The passes that run on Tandem — `reviewer`, `retro`, `consolidator` — live in the Tandem repo, which owns the board and the bikeshed they act on; this repo holds `black` and `blue` (the same prompt, two models, opt-in) and `terse`, the style every prompt runs under. OpenCode discovers the agents through symlinks in `~/.config/opencode/agents/`.
 
 ## Agents
 
@@ -38,18 +38,17 @@ Install and the savings caveats: [`terse/README.md`](terse/README.md).
 
 ## Install / re-link
 
+The two builders are **opt-in**: nothing links them by default, because a host that carries them also carries two more models than a machine that wants the Tandem workflow. Link them when you want the comparison arm:
+
 ```sh
 # this repo, from its root
 ln -s "$PWD/black.md" ~/.config/opencode/agents/black.md
 ln -s "$PWD/blue.md" ~/.config/opencode/agents/blue.md
-
-# the Tandem repo, from its root — the passes that run on Tandem
-/path/to/tandem/Scripts/install-agent-host.sh
 ```
 
-The passes that run on Tandem are installed by the Tandem repo, which owns them: `reviewer`, `retro` and `consolidator`, and the skills and instructions they work with. That script resolves the Tandem checkout from its own location, so the clone can live anywhere. It lands with the next Tandem release (tandem PR #73) — until then, the prompts are in this repo's history and in the Tandem PR.
+The passes that run on Tandem are installed by the Tandem repo, which owns them: `reviewer`, `retro` and `consolidator`, and the skills and instructions they work with. The `tandem-setup` skill does it — ask your agent to set up Tandem. It lands with the next Tandem release (tandem PR #73) — until then, the prompts are in this repo's history and in the Tandem PR.
 
-Verify with `opencode api agent.list` — `black`, `blue`, `reviewer`, `retro` and `consolidator` should appear with their models and colors.
+Verify with `opencode api agent.list` — `reviewer`, `retro` and `consolidator` should appear with their models and colors, and `black` and `blue` only if you linked them.
 
 ## Reviewing
 

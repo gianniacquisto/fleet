@@ -1,6 +1,6 @@
 # Workflow
 
-The fleet works in tandem with **Tandem**: the board (`tandem-cli todo …`) is the queue, the bikeshed (`~/.tandem/bikeshed/`) is the memory, and the agents below are the only actors. This file is the map of that: who does what, at which gate, and what each handoff passes. The ticket model, its gates, and the board skill live in the Tandem repo; this file names the fleet's actors against them.
+The fleet works in tandem with **Tandem**: the board (`tandem-cli todo …`) is the queue, the bikeshed (`~/.tandem/bikeshed/`) is the memory, and the agents below and the human are the actors. This file is the map of that: who does what, at which gate, and what each handoff passes. The ticket model, its gates, and the board skill live in the Tandem repo; this file names the fleet's actors against them.
 
 ## Roster
 
@@ -32,7 +32,7 @@ One unit of work, end to end:
 What crosses each boundary:
 
 - **Dispatcher → builder** — the ticket id and description only. Restating memory in the brief is how two versions of the truth start.
-- **Builder → reviewer** — a PR whose body carries the `## Merge Danger` claim (`Door:`, `Blast Radius:`) and the evidence (`## Progress`). The reviewer verifies the claim against the diff; it is a claim, not evidence.
+- **Builder → reviewer** — a PR whose body carries the `## Merge Danger` claim (`Door:`, `Blast Radius:`) and the evidence (`## Progress`). The reviewer verifies the claim against the diff; it is a claim, not evidence. The `## Progress` section is this repo's convention, not one any builder prompt requires — see Gap 1.
 - **Reviewer → dispatcher** — one verdict line (`VERDICT: merged | escalated | blocked — …`) plus what changed in the store.
 - **Retro → the board** — `backlog` tickets in the project's lane; the report is a receipt. Nothing else moves.
 - **Consolidator → the bikeshed** — curated notes only. Raw captures are create-only; archiving a consumed one is a `mv`, not an edit.
@@ -45,7 +45,7 @@ The actor holding the evidence completes the ticket:
 - **Non-PR outcome** (a filed ticket, a recorded answer, a changed file) → the dispatcher verifies the evidence, then completes.
 - **Human decision** → the answering pass completes it once the `## Answer` is in the description.
 
-This reconciles the two current statements — the reviewer's own prompt completes what it merges, and the board skill has the root verify then complete — see Gaps.
+The two current statements differ — the reviewer's own prompt completes what it merges, and the board skill has the root verify then complete — so the rule above is the proposal that closes Gap 3, not a description of today's behaviour.
 
 ## Memory substrate
 
@@ -68,4 +68,4 @@ Each is filed as a `backlog` ticket in the `fleet` lane; this section is the sum
 
 - `consolidator` is out of this repo by decision (2026-10-19): its job is the Tandem saddlebag, so it lives with that protocol.
 - `black` and `blue` are one prompt, two models — a prompt edit lands identically in both, and the pair isolates the model's effect.
-- `main` is protected server-side: PR required, merge commits only, force pushes refused. A fresh clone gets GitHub's rule and nothing else.
+- `main` is protected server-side: PR required, force pushes and deletions refused, zero approvals, linear history off. Squash and rebase merges are still permitted by the server — the merge-commit rule is this repo's convention, not a server rule. A fresh clone gets GitHub's rule and nothing else.

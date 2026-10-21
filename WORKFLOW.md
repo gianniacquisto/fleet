@@ -20,8 +20,8 @@ The fleet works in tandem with **Tandem**: the board (`tandem-cli todo …`) is 
 
 One unit of work, end to end:
 
-1. **Capture** — any agent, any time. Every session files its session ticket at start (`Session — <project> · <session-id>`), files a `note capture` at each non-obvious decision or gotcha, and closes the ticket at the end with what it did.
-2. **Triage** — the dispatcher pass (`/board`, any primary agent with the `tandem-board` skill). `backlog` → `refined` by grilling; `refined` with no open question and no human-only decision → `ready`; human-only → escalated (`refined`, `assignee human`). One pass, one capture.
+1. **Capture** — any agent, any time. Every session files its session ticket at start (`Session — <project> · <session-id>`) with a brief — what the session is for and what done looks like — files a `note capture` at each non-obvious decision or gotcha, and closes the ticket at the end with the outcome appended below the brief. The session ticket is work, not a log entry: a board pass refines it and moves it like any other ticket (Tandem ADR 0024).
+2. **Triage** — the dispatcher pass (`/board`, any primary agent with the `tandem-board` skill). `backlog` → `refined` by grilling; `refined` with no open question and no human-only decision → `ready`; human-only → escalated (`refined`, `assignee human`). One pass, one capture. A session ticket whose session has ended is stale work and joins this queue: the session id in its title settles liveness — `opencode api session.list` shows each session with a `time.updated`, and a ticket whose session is live belongs to that session and is left alone.
 3. **Dispatch** — the dispatcher claims a `ready` ticket (`in-progress` + `assignee`) and hands the builder **the ticket id and description only**. The builder orients itself (`AGENTS.md`, the bikeshed, `todo list`), works in a branch or worktree, verifies, opens the PR, files captures, and ends with one `work` capture.
 4. **Review** — the `reviewer` subagent reads the ticket, the diff, the checks, the repo's rules, and the PR's `## Merge Danger` claim. Two-way door + low blast radius → merge commit, then complete the ticket. One-way or high → escalate to the human with `file:line` risks. Cannot merge this pass → `blocked`, stays with its author.
 5. **Retro** — the `retro` subagent over a named session; each finding that clears the bar becomes a `backlog` ticket in the project's lane. Zero tickets is valid. The trigger is not yet defined — see Gaps.
@@ -49,7 +49,7 @@ The two current statements differ — the reviewer's own prompt completes what i
 
 ## Memory substrate
 
-- **Sessions record themselves** — the session ticket at start and end, captures in between, one `work` capture on the floor.
+- **Sessions record themselves** — the session ticket at start and end, captures in between, one `work` capture on the floor. The ticket carries a brief, gains the outcome by appending, and goes through the board like any other ticket.
 - **Curated notes have exactly one writer** — the consolidator, run on request.
 - **Orientation** for a new session — the bikeshed `Index` → the project's curated note → `todo list`, or the `/handoff` block for a paste-ready cut.
 

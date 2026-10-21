@@ -20,7 +20,7 @@ The split is by ownership, not by kind: the passes that run on Tandem live in th
 
 OpenCode v2.0.32 keeps agent and model as separate selections: switching agents does **not** switch the model. The `model:` frontmatter in these files is only honored when the agent runs as a subagent (task tool) or via a command bound to that agent. So dispatch with both:
 
-- **TUI**: switch to `black`/`blue`, then pick its model once in the model selector. The TUI remembers the selection per agent, so later switches to the same agent keep it.
+- **TUI**: switch to `black`/`blue`, then pick its model once in the model selector. The TUI remembers the selection per agent, so later switches to the same agent keep it. (Both are opt-in — link them first, see [Install](#install--re-link).)
 - **CLI**:
 
 ```sh
@@ -38,7 +38,7 @@ Install and the savings caveats: [`terse/README.md`](terse/README.md).
 
 ## Install / re-link
 
-The two builders are **opt-in**: nothing links them by default, because a host that carries them also carries two more models than a machine that wants the Tandem workflow. Link them when you want the comparison arm:
+The two builders are **opt-in**: nothing links them by default, because a host that carries them also carries two more agents to choose from than a machine that wants the Tandem workflow. Link them when you want the comparison arm:
 
 ```sh
 # this repo, from its root

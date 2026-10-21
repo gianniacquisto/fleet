@@ -76,6 +76,6 @@ Each gap is filed as a ticket — in the `fleet` lane for this repo's own gaps, 
 
 ## Deliberate boundaries
 
-- `consolidator` is out of this repo (2026-10-19; moved 2026-10-21): its job is the Tandem saddlebag, so it lives with that protocol. It now lives in the tandem repo's `agents/`, next to `reviewer` and `retro` — the three passes that run on Tandem, in the project that owns the board and the bikeshed they act on. Tandem's ADR 0026 records the decision; this repo keeps `black`, `blue` and `terse`.
+- `consolidator` is out of this repo (2026-10-19; moved 2026-10-21): its job is the Tandem saddlebag, so it lives with that protocol. It now lives in the tandem repo's `agents/`, next to `refine`, `reviewer` and `retro` — the four passes that run on Tandem, in the project that owns the board and the bikeshed they act on. Tandem's ADR 0026 records the decision; this repo keeps `black`, `blue` and `terse`.
 - `black` and `blue` are one prompt, two models — a prompt edit lands identically in both, and the pair isolates the model's effect.
 - `main` is protected server-side: PR required, force pushes and deletions refused, zero approvals, linear history off. Squash and rebase merges are still permitted by the server — the merge-commit rule is this repo's convention, not a server rule. A fresh clone gets GitHub's rule and nothing else.

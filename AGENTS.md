@@ -43,7 +43,7 @@ Session tickets live in the default area, so they never depend on a lane that ma
 
 [`WORKFLOW.md`](WORKFLOW.md) is the map of the fleet: the roster, the six passes — capture → triage → dispatch → review → retro → consolidate — the handoff contract at each boundary, the completion rule, and the gaps where the fleet does not yet fully run on Tandem. Read it before a pass, and change it there when a rule moves — it holds them.
 
-This repo owns the two builders (`black`, `blue`) and the `terse` style. The passes that run on Tandem — `reviewer`, `retro`, `consolidator` — live in the Tandem repo, which owns the board and the bikeshed they act on.
+This repo owns the two builders (`black`, `blue`) and the `terse` style. The passes that run on Tandem — `refine`, `reviewer`, `retro`, `consolidator` — live in the Tandem repo, which owns the board and the bikeshed they act on.
 
 ## The shared protocol
 

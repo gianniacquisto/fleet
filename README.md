@@ -8,11 +8,19 @@ Personal agent fleet: the model-switch builders, and the map of the workflow the
 |---|---|---|---|---|
 | `black` | `primary` | `gianni-desktop/Qwen3.8-27B-UD-Q6_K` | this repo | Local Qwen 27B (OpenAI-compatible server at `gianni-desktop:8000`) |
 | `blue` | `primary` | `opencode/deepseek-v4.1-flash-free` | this repo | Free OpenCode Zen DeepSeek |
+| `general` | `subagent` | the session's | the harness (OpenCode) | The harness's generalist — the builder the board dispatches a buildable ticket to |
+| `explore` | `subagent` | the session's | the harness (OpenCode) | The harness's read-only repo search |
 | `reviewer` | `subagent` | `opencode/deepseek-v4.1-flash-free` | the tandem repo | Reviews a PR and merges only a two-way door — see [Reviewing](#reviewing) |
 | `retro` | `subagent` | `opencode/deepseek-v4.1-flash-free` | the tandem repo | Runs the retro skill on a session and files findings as backlog tickets — see [Retro](#retro) |
 | `consolidator` | `subagent` | — | the tandem repo | Folds the bikeshed's captures into the curated notes; on request only |
 
+The roster of record is the [Roster](WORKFLOW.md#roster) in `WORKFLOW.md`; this table is the front page's summary of it.
+
+`general` and `explore` are the harness's, not the fleet's: OpenCode ships them, so no file in this repo or the Tandem repo defines them, and neither names a model — each runs the model of the session that dispatches it.
+
 `black` and `blue` are pure model switches — identical prompt, different model, so they are directly comparable. `reviewer` is dispatched for one PR and ends with a verdict; `retro` is dispatched for one session and ends by filing tickets.
+
+**How the three Tandem passes are entered.** They are not host commands, and no repo ships a command file for them — what the Tandem repo holds are skills: `skills/tandem-board/` triages and dispatches, `skills/tandem-consolidate/` dispatches the `consolidator` agent, and the `retro` agent runs the categories in `skills/retro/`, a file it reads rather than a skill it invokes. The `reviewer` is dispatched by a session, not by a skill: its contract is its own prompt (`agents/reviewer.md` there), and the session hands it a ticket id and a PR number. A host that wants its own shortcut binds one; the binding is the host's business.
 
 The split is by ownership, not by kind: the passes that run on Tandem live in the Tandem repo (`agents/` there), because the board, the bikeshed and the ticket model they act on are Tandem's. The two that are only builders — one prompt, two models — stay here. Tandem's ADR 0026 (`docs/adr/0026-agent-prompts-and-portable-setup.md` in that repo) records the decision.
 
@@ -71,7 +79,7 @@ Its body is the retro skill plus the filing rules: the skill's last step present
 
 ## Workflow
 
-[WORKFLOW.md](WORKFLOW.md) is the end-to-end map: every agent's role in the ticket lifecycle, the handoffs between them, and the gaps where the fleet does not yet fully run on Tandem.
+[WORKFLOW.md](WORKFLOW.md) is the end-to-end map: its [Roster](WORKFLOW.md#roster) is the roster of record, and the rest is every agent's role in the ticket lifecycle, the handoffs between them, and the gaps where the fleet does not yet fully run on Tandem.
 
 ## Adding a new agent
 
@@ -81,4 +89,4 @@ Its body is the retro skill plus the filing rules: the skill's last step present
 
 ## Not in this repo
 
-The passes that run on Tandem — `reviewer`, `retro` and `consolidator` — live in the Tandem repo, in `agents/` there. They read the board through `tandem-cli` and write into the bikeshed, so the project that owns those owns their prompts; Tandem's ADR 0026 records the decision. This repo keeps `black`, `blue` and `terse`.
+The passes that run on Tandem — `reviewer`, `retro` and `consolidator` — live in the Tandem repo, in `agents/` there, with the skills they run in `skills/` there. They read the board through `tandem-cli` and write into the bikeshed, so the project that owns those owns their prompts; Tandem's ADR 0026 records the decision. This repo keeps `black`, `blue` and `terse`.

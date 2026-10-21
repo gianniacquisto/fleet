@@ -27,7 +27,7 @@ Every session records itself as a ticket, so the board shows what is running and
 
   `<session-id>` is `$OPENCODE_SESSION_ID` (a short token when the host exports none), and `<agent>` is your agent's name when the session tells you — omit the flag when it does not.
 
-- **One ticket per session.** If `tandem-cli todo list --filter all --text "<session-id>"` already shows one, file nothing.
+- **One ticket per session.** If `tandem-cli todo list --filter all --text "Session — <project> · <session-id>"` already shows one, file nothing.
 
 - **Close it at session end**, before your final reply: read the description, append the outcome below the brief under a heading of your own, and write it back. The description is written once and appended to, never overwritten.
 

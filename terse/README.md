@@ -26,13 +26,13 @@ Verified paths; `install.sh` does the symlinks and prints the rest.
 Claude Code and Codex — symlink, so edits here apply everywhere:
 
 ```sh
-ln -s ~/projects/fleet/terse/TERSE.md ~/.claude/rules/terse.md
-ln -s ~/projects/fleet/terse/TERSE.md ~/.codex/AGENTS.md   # only if you have no global AGENTS.md
+ln -s "$PWD/TERSE.md" ~/.claude/rules/terse.md
+ln -s "$PWD/TERSE.md" ~/.codex/AGENTS.md   # only if you have no global AGENTS.md
 ```
 
 Codex reads a single global file and has no import syntax. If `~/.codex/AGENTS.md` already exists, paste the body of `TERSE.md` into it under a `## Style` heading instead of replacing it.
 
-These links point into a Git working tree, so `~/projects/fleet` has to stay on `main` (or a branch that contains it). Check out an older branch there and the plugin and the switch both dangle: terse goes off silently and `/terse` cannot run. `install.sh` reports a dangling link; the fix is `git -C ~/projects/fleet checkout main`.
+These links point into a Git working tree, so this checkout has to stay on `main` (or a branch that contains it). Check out an older branch and the plugin and the switch both dangle: terse goes off silently and `/terse` cannot run. `install.sh` reports a dangling link; the fix is `git -C <this checkout> checkout main`.
 
 ## The switch (OpenCode)
 

@@ -14,7 +14,7 @@ Personal agent fleet: the model-switch builders, and the map of the workflow the
 
 `black` and `blue` are pure model switches — identical prompt, different model, so they are directly comparable. `reviewer` is dispatched for one PR and ends with a verdict; `retro` is dispatched for one session and ends by filing tickets.
 
-The split is by ownership, not by kind: the passes that run on Tandem live in the Tandem repo (`~/projects/tandem/agents/`), because the board, the bikeshed and the ticket model they act on are Tandem's. The two that are only builders — one prompt, two models — stay here. Tandem's ADR 0026 (`docs/adr/0026-agent-prompts-live-here.md` in that repo) records the decision.
+The split is by ownership, not by kind: the passes that run on Tandem live in the Tandem repo (`agents/` there), because the board, the bikeshed and the ticket model they act on are Tandem's. The two that are only builders — one prompt, two models — stay here. Tandem's ADR 0026 (`docs/adr/0026-agent-prompts-and-portable-setup.md` in that repo) records the decision.
 
 ## Dispatching
 
@@ -39,24 +39,21 @@ Install and the savings caveats: [`terse/README.md`](terse/README.md).
 ## Install / re-link
 
 ```sh
-# this repo
-ln -s ~/projects/fleet/black.md ~/.config/opencode/agents/black.md
-ln -s ~/projects/fleet/blue.md ~/.config/opencode/agents/blue.md
+# this repo, from its root
+ln -s "$PWD/black.md" ~/.config/opencode/agents/black.md
+ln -s "$PWD/blue.md" ~/.config/opencode/agents/blue.md
+
+# the Tandem repo, from its root — the passes that run on Tandem
+/path/to/tandem/Scripts/install-agent-host.sh
 ```
 
-The passes that run on Tandem are installed by the Tandem repo, which owns them:
-
-```sh
-~/projects/tandem/Scripts/install-agent-host.sh
-```
-
-That links `reviewer`, `retro` and `consolidator` — and the skills and instructions they work with — into `~/.config/opencode/`, and it resolves the Tandem checkout from its own location, so the clone can live anywhere.
+The passes that run on Tandem are installed by the Tandem repo, which owns them: `reviewer`, `retro` and `consolidator`, and the skills and instructions they work with. That script resolves the Tandem checkout from its own location, so the clone can live anywhere. It lands with the next Tandem release (tandem PR #73) — until then, the prompts are in this repo's history and in the Tandem PR.
 
 Verify with `opencode api agent.list` — `black`, `blue`, `reviewer`, `retro` and `consolidator` should appear with their models and colors.
 
 ## Reviewing
 
-`reviewer` is a subagent — its prompt is in the Tandem repo, `~/projects/tandem/agents/reviewer.md`. The trunk hands it a ticket whose PR is waiting for review, plus the PR number. It reads the diff, the checks and the ticket, reviews against the repo's `AGENTS.md`, ADRs and `GLOSSARY.md`, then puts the change in one of two classes. The rule is about what a revert costs.
+`reviewer` is a subagent — its prompt is in the Tandem repo, `agents/reviewer.md` there. The trunk hands it a ticket whose PR is waiting for review, plus the PR number. It reads the diff, the checks and the ticket, reviews against the repo's `AGENTS.md`, ADRs and `GLOSSARY.md`, then puts the change in one of two classes. The rule is about what a revert costs.
 
 - **Two-way door + low blast radius** — the change is revertible with one `git revert` (or by deleting what it added) and leaves nothing behind: no stored-data or schema change, no published contract, no release, nothing reaching past this repo. The reviewer approves, merges with `gh pr merge --merge` — a merge commit, never a squash, so the history a revert needs survives — and completes the ticket with the PR as evidence.
 - **One-way / destructive / high blast radius** — a revert does not undo it, or it reaches past this repo: a schema or envelope change, a migration, deleting data, a published API, a release, branch policy. The reviewer comments the specific risks, sets the ticket `assignee human` + `refined`, and never merges.
@@ -65,7 +62,7 @@ Unsure goes to the second class. The author states the class in the PR body's `#
 
 ## Retro
 
-`retro` is a subagent — its prompt is in the Tandem repo, `~/projects/tandem/agents/retro.md`. The caller names a session and it reads the transcript (`opencode api session.message.list`), runs the retro skill's categories against it, and files each finding as a `backlog` ticket in that project's cycle lane. The tickets are the output; the report is a receipt.
+`retro` is a subagent — its prompt is in the Tandem repo, `agents/retro.md` there. The caller names a session and it reads the transcript (`opencode api session.message.list`), runs the retro skill's categories against it, and files each finding as a `backlog` ticket in that project's cycle lane. The tickets are the output; the report is a receipt.
 
 - **The bar** — an anchor in the transcript, a named cost, and a next move someone can take without having been in the session. Generic advice, a preference with no cost, and anything an open ticket already covers is skipped and named.
 - **Nothing else moves.** Always `backlog`, never assigned. It does not refine, dispatch, complete, or edit the code the session touched — a retro that fixes what it finds cannot report on it honestly.
@@ -85,4 +82,4 @@ Its body is the retro skill plus the filing rules: the skill's last step present
 
 ## Not in this repo
 
-The passes that run on Tandem — `reviewer`, `retro` and `consolidator` — live in the Tandem repo, in `~/projects/tandem/agents/`. They read the board through `tandem-cli` and write into the bikeshed, so the project that owns those owns their prompts; Tandem's ADR 0026 records the decision. This repo keeps `black`, `blue` and `terse`.
+The passes that run on Tandem — `reviewer`, `retro` and `consolidator` — live in the Tandem repo, in `agents/` there. They read the board through `tandem-cli` and write into the bikeshed, so the project that owns those owns their prompts; Tandem's ADR 0026 records the decision. This repo keeps `black`, `blue` and `terse`.

@@ -51,7 +51,7 @@ The actor holding the evidence completes the ticket:
 - **Non-PR outcome** (a filed ticket, a recorded answer, a changed file) → the dispatcher verifies the evidence, then completes.
 - **Human decision** → the answering pass completes it once the `## Answer` is in the description.
 
-The two current statements differ — the reviewer's own prompt completes what it merges, and the board skill has the root verify then complete — so the rule above is the proposal that closes Gap 3, not a description of today's behaviour.
+This is the rule in force, not a proposal: it is stated, in the same words, in the Tandem repo's [`agents/reviewer.md`](https://github.com/gianniacquisto/tandem/blob/dev/agents/reviewer.md) (`## Completion`) and [`skills/tandem-board/SKILL.md`](https://github.com/gianniacquisto/tandem/blob/dev/skills/tandem-board/SKILL.md) (the dispatch step) — the two documents a handoff passes through.
 
 ## Memory substrate
 

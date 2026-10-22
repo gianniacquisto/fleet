@@ -54,6 +54,8 @@ The actor holding the evidence completes the ticket:
 
 This is the rule in force, not a proposal: it is stated, in the same words, in the Tandem repo's [`agents/reviewer.md`](https://github.com/gianniacquisto/tandem/blob/dev/agents/reviewer.md) (`## Completion`) and [`skills/tandem-board/SKILL.md`](https://github.com/gianniacquisto/tandem/blob/dev/skills/tandem-board/SKILL.md) (the dispatch step) — the two documents a handoff passes through.
 
+**The handoff rule** is in the same two documents: [`agents/reviewer.md`](https://github.com/gianniacquisto/tandem/blob/dev/agents/reviewer.md) (`## Handoff`) and [`skills/tandem-board/SKILL.md`](https://github.com/gianniacquisto/tandem/blob/dev/skills/tandem-board/SKILL.md) (the dispatch step). The order and the agent names it reads are the Tandem repo's roster: [`skills/tandem-team/SKILL.md`](https://github.com/gianniacquisto/tandem/blob/dev/skills/tandem-team/SKILL.md).
+
 ## Memory substrate
 
 - **Sessions record themselves** — the session ticket at start and end, captures in between, one `work` capture on the floor. The ticket carries a brief, gains the outcome by appending, and goes through the board like any other ticket.

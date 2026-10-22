@@ -58,7 +58,7 @@ ln -s "$PWD/blue.md" ~/.config/opencode/agents/blue.md
 
 The passes that run on Tandem are installed by the Tandem repo, which owns them: `refine`, `reviewer`, `retro` and `consolidator`, and the skills and instructions they work with. The `tandem-setup` skill does it — ask your agent to set up Tandem. It lands with the next Tandem release (tandem PR #73) — until then, the prompts are in this repo's history and in the Tandem PR.
 
-Verify with `opencode api agent.list` — `refine`, `reviewer`, `retro` and `consolidator` should appear with their models and colors, and `black` and `blue` only if you linked them.
+Verify with `opencode api agent.list` — `refine`, `reviewer`, `retro` and `consolidator` should appear with the frontmatter the Tandem repo gives them: a `color` in `refine`, `retro` and `reviewer`, `permissions` in `consolidator`, and no model in any of them. `black` and `blue` only if you linked them.
 
 ## Reviewing
 

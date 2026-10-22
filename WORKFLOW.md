@@ -11,9 +11,9 @@ The fleet works in tandem with **Tandem**: the board (`tandem-cli todo …`) is 
 | `build` | primary, harness built-in | the host's default agent — the one a session runs when nothing names another | OpenCode |
 | `general` | subagent, harness built-in | builder dispatched for one ticket; multi-step work | OpenCode |
 | `explore` | subagent, harness built-in | read-only, fast repo search | OpenCode |
-| `refine` | subagent, DeepSeek | the triage pass; a `backlog` ticket into a brief a builder can be handed | the tandem repo |
-| `reviewer` | subagent, DeepSeek | the review gate; merges two-way doors | the tandem repo |
-| `retro` | subagent, DeepSeek | post-session pass; files `backlog` tickets | the tandem repo |
+| `refine` | subagent, host default | the triage pass; a `backlog` ticket into a brief a builder can be handed | the tandem repo |
+| `reviewer` | subagent, host default | the review gate; merges two-way doors | the tandem repo |
+| `retro` | subagent, host default | post-session pass; files `backlog` tickets | the tandem repo |
 | `consolidator` | subagent | the sole writer of the curated bikeshed notes; on request only | the tandem repo |
 
 `terse` is not an agent: a request-time behaviour (a plugin plus a switch) that every prompt above runs under.

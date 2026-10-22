@@ -11,14 +11,14 @@ Personal agent fleet: the model-switch builders, and the map of the workflow the
 | `build` | `primary` | the session's | the harness (OpenCode) | The harness's default agent — the one a session runs when nothing names another |
 | `general` | `subagent` | the session's | the harness (OpenCode) | The harness's generalist — the builder the board dispatches a buildable ticket to |
 | `explore` | `subagent` | the session's | the harness (OpenCode) | The harness's read-only repo search |
-| `refine` | `subagent` | `opencode/deepseek-v4.1-flash-free` | the tandem repo | Grills a `backlog` ticket into a brief a builder can be handed; the triage pass |
-| `reviewer` | `subagent` | `opencode/deepseek-v4.1-flash-free` | the tandem repo | Reviews a PR and merges only a two-way door — see [Reviewing](#reviewing) |
-| `retro` | `subagent` | `opencode/deepseek-v4.1-flash-free` | the tandem repo | Runs the retro skill on a session and files findings as backlog tickets — see [Retro](#retro) |
+| `refine` | `subagent` | — | the tandem repo | Grills a `backlog` ticket into a brief a builder can be handed; the triage pass |
+| `reviewer` | `subagent` | — | the tandem repo | Reviews a PR and merges only a two-way door — see [Reviewing](#reviewing) |
+| `retro` | `subagent` | — | the tandem repo | Runs the retro skill on a session and files findings as backlog tickets — see [Retro](#retro) |
 | `consolidator` | `subagent` | — | the tandem repo | Folds the bikeshed's captures into the curated notes; on request only |
 
 The roster of record is the [Roster](WORKFLOW.md#roster) in `WORKFLOW.md`; this table is the front page's summary of it.
 
-`build`, `general` and `explore` are the harness's, not the fleet's: OpenCode ships them, so no file in this repo or the Tandem repo defines them, and none of the three names a model — each runs the model of the session it is in.
+`build`, `general` and `explore` are the harness's, not the fleet's: OpenCode ships them, so no file in this repo or the Tandem repo defines them, and none of the three names a model — each runs the model of the session it is in. The Tandem repo's `refine`, `reviewer` and `retro` name no model either, so they run on the host's default the same way.
 
 `black` and `blue` are pure model switches — identical prompt, different model, so they are directly comparable. `refine` is dispatched for one ticket and ends with a brief; `reviewer` is dispatched for one PR and ends with a verdict; `retro` is dispatched for one session and ends by filing tickets.
 
